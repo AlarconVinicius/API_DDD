@@ -46,7 +46,7 @@ namespace WebAPIs.Controllers
                     .AddSubject("Empresa - Canal Dev Net Core")
                     .AddIssuer("Teste.Securiry.Bearer")
                     .AddAudience("Teste.Securiry.Bearer")
-                    .AddClaim("idUsuario", idUser)
+                    .AddClaim("idUser", idUser)
                     .AddExpiry(5)
                     .Builder();
                 return Ok(token.value);

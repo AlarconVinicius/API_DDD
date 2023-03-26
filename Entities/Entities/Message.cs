@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Entities.Entities
 {
     [Table("TB_MESSAGE")]
-    public class Message
+    public class Message : Notifies
     {
         [Column("MSG_ID")]
         public int Id { get; set; }
