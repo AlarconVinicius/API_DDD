@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Domain.Interfaces;
+using Domain.Interfaces.InterfacesServices;
 using Entities.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -14,11 +15,13 @@ namespace WebAPIs.Controllers
     {
         private readonly IMapper _iMapper;
         private readonly IMessage _iMessage;
+        private readonly IServiceMessage _iServiceMessage;
 
-        public MessageController(IMapper iMapper, IMessage iMessage)
+        public MessageController(IMapper iMapper, IMessage iMessage, IServiceMessage iServiceMessage)
         {
             _iMapper = iMapper;
             _iMessage = iMessage;
+            _iServiceMessage = iServiceMessage;
         }
 
         [Authorize]
@@ -28,7 +31,8 @@ namespace WebAPIs.Controllers
         {
             message.UserId = await RetornarIdUsuarioLogado();
             var messageMap = _iMapper.Map<Message>(message);
-            await _iMessage.Add(messageMap);
+            //await _iMessage.Add(messageMap);
+            await _iServiceMessage.Adicionar(messageMap);
             return messageMap.Notificacoes;
         }
 
@@ -38,7 +42,8 @@ namespace WebAPIs.Controllers
         public async Task<List<Notifies>> Update(MessageViewModel message)
         {
             var messageMap = _iMapper.Map<Message>(message);
-            await _iMessage.Update(messageMap);
+            //await _iMessage.Update(messageMap);
+            await _iServiceMessage.Atualizar(messageMap);
             return messageMap.Notificacoes;
         }
 
@@ -71,6 +76,17 @@ namespace WebAPIs.Controllers
             var messagesMap = _iMapper.Map<List<MessageViewModel>>(messages);
             return messagesMap;
         }
+
+        [Authorize]
+        [Produces("application/json")]
+        [HttpGet("/api/ListarMessageAtivas")]
+        public async Task<List<MessageViewModel>> ListarMessageAtivas()
+        {
+            var messages = await _iServiceMessage.ListarMessageAtivas();
+            var messagesMap = _iMapper.Map<List<MessageViewModel>>(messages);
+            return messagesMap;
+        }
+
         private async Task<string> RetornarIdUsuarioLogado()
         {
             if (User != null)
